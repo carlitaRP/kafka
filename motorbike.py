@@ -33,7 +33,7 @@ if __name__ == "__main__":
     df_filtered.show(20)
 
     # Guardar los resultados en formato JSON
-    df_filtered.write.mode("overwrite").json("results/motorcycle_data")
+    df_filtered.write.mode("overwrite").json("results/motorcycle")
 
     # Cerrar sesión de Spark
     spark.stop()
