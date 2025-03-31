@@ -39,6 +39,8 @@ jobs:
     #- run: spark-submit --master local hello.py
     #- run: ls -la
     - run: wget -O dataset.csv ${{github.event.client_payload.dataseturl}}
+    - run: ls -la  
+    - run: head -n 5 dataset.csv  
     - run: wget -O app.py ${{github.event.client_payload.codeurl}}
     - run: ls -la
     - run: spark-submit --master local app.py dataset.csv
