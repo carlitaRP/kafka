@@ -4,44 +4,37 @@ if __name__ == "__main__":
     # Crear sesión de Spark
     spark = SparkSession\
         .builder\
-        .appName("motorcycle")\
+        .appName("motorcycle_sales")\
         .getOrCreate()
-
-    # Cargar el dataset
-    path_bikes = "dataset.csv"
-    df_bikes = spark.read.csv(path_bikes, header=True, inferSchema=True)
-
-    # Verificar si el DataFrame se cargó correctamente
-    if df_bikes.isEmpty():
-        print("El archivo CSV no tiene datos o no se cargó correctamente.")
-        spark.stop()
-        exit()
-
+    
+    # Cargar el dataset de motocicletas
+    path_motorcycles = "dataset.csv"
+    df_motorcycles = spark.read.csv(path_motorcycles, header=True, inferSchema=True)
+    
     # Crear vista temporal
-    df_bikes.createOrReplaceTempView("bikes")
-
-    # Lista de las mejores marcas de motocicletas
-    top_brands = [
-        "Honda", "Yamaha", "Kawasaki", "Suzuki", "Ducati", 
-        "BMW", "KTM", "Harley-Davidson", "Triumph", "Aprilia"
+    df_motorcycles.createOrReplaceTempView("motorcycles")
+    
+    # Lista de marcas populares o mejores marcas de motocicletas
+    best_brands = [
+        "Harley-Davidson", "Yamaha", "Honda", 
+        "Ducati", "Kawasaki", "BMW", 
+        "Suzuki", "Triumph", "KTM", "Indian"
     ]
-
-    # Convertir la lista a una consulta SQL válida
-    brands_str = "', '".join(top_brands)  # Convertir lista a cadena SQL
+    
+    # Filtrar motocicletas por las mejores marcas y ordenar alfabéticamente por marca y modelo
     query = f"""
         SELECT Brand, Model
-        FROM bikes
-        WHERE LOWER(Brand) IN ('{brands_str}')
-        ORDER BY Brand ASC
+        FROM motorcycles
+        WHERE Brand IN {tuple(best_brands)}
+        ORDER BY Brand ASC, Model ASC
     """
-
     df_filtered = spark.sql(query)
-
+    
     # Mostrar algunos resultados
     df_filtered.show(20)
-
+    
     # Guardar los resultados en formato JSON
-    df_filtered.write.mode("overwrite").json("results/motorcycle")
-
+    df_filtered.write.mode("overwrite").json("results/motorcycle_sales")
+    
     # Cerrar sesión de Spark
     spark.stop()
