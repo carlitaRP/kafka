@@ -16,9 +16,7 @@ if __name__ == "__main__":
     
     # Lista de marcas populares o mejores marcas de motocicletas
     best_brands = [
-        "Harley-Davidson", "Yamaha", "Honda", 
-        "Ducati", "Kawasaki", "BMW", 
-        "Suzuki", "Triumph", "KTM", "Indian"
+        "aprilia", "bajaj", "benelli", "bmw", "ducati", "kawasaki"
     ]
     
     # Filtrar motocicletas por las mejores marcas y ordenar alfabéticamente por marca y modelo
