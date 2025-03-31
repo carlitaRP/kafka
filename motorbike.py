@@ -9,10 +9,18 @@ if __name__ == "__main__":
 
     # Cargar el dataset
     path_bikes = "dataset.csv"
-    df_bikes = spark.read.csv(path_bikes, header=True, inferSchema=True)
+    df_bikes = spark.read.option("header", True).option("inferSchema", True).csv(path_bikes)
 
-    # Crear vista temporal
-    df_bikes.createOrReplaceTempView("bikes")
+    # Verificar si se cargó correctamente
+    df_bikes.show(5)
+    print(df_bikes.columns)
+    print(f"Total de filas en el dataset: {df_bikes.count()}")
+
+    # Limpiar nombres de columnas
+    df_bikes = df_bikes.toDF(*[c.strip() for c in df_bikes.columns])
+
+    # Revisar si las marcas coinciden
+    df_bikes.select("Brand").distinct().show(50)
 
     # Lista de las mejores marcas de motocicletas
     top_brands = [
@@ -24,16 +32,17 @@ if __name__ == "__main__":
     query = f"""
         SELECT Brand, Model
         FROM bikes
-        WHERE Brand IN {tuple(top_brands)}
+        WHERE LOWER(Brand) IN {tuple(b.lower() for b in top_brands)}
         ORDER BY Brand ASC
     """
     df_filtered = spark.sql(query)
 
     # Mostrar algunos resultados
-    df_filtered.show(20)
+    df_filtered.show(10)
+    print(f"Total de filas filtradas: {df_filtered.count()}")
 
-    # Guardar los resultados en formato JSON
-    df_filtered.write.mode("overwrite").json("results/motorcycle")
+    # Guardar los resultados en formato CSV para pruebas
+    df_filtered.write.mode("overwrite").csv("results/motorcycle")
 
     # Cerrar sesión de Spark
     spark.stop()
