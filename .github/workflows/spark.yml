@@ -9,7 +9,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   repository_dispatch:
     types: [spark]
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
   # This workflow contains a single job called "build"
   spark:
@@ -18,12 +18,9 @@ jobs:
 
     permissions:
       contents: write  
-      
+
     steps:
     - uses: actions/checkout@v4
-    #- run: ls -la 
-      with:
-        python-version: '3.10'
 
     - uses: actions/setup-java@v4
       with:
@@ -36,24 +33,28 @@ jobs:
         hadoop-version: '3'
 
     - run: spark-submit --version
-    #- run: spark-submit --master local hello.py
-    #- run: ls -la
+
+    # Descargar el dataset de motocicletas y el script
     - run: wget -O dataset.csv ${{github.event.client_payload.dataseturl}}
-    - run: ls -la  
-    - run: head -n 5 dataset.csv  
-    - run: wget -O app.py ${{github.event.client_payload.codeurl}}
-    - run: ls -la
-    - run: spark-submit --master local app.py dataset.csv
+    - run: wget -O motorcycle_app.py ${{github.event.client_payload.codeurl}}
+
+    # Verificar que los archivos fueron descargados correctamente
     - run: ls -la
 
-      
+    # Ejecutar el código de Spark
+    - run: spark-submit --master local motorcycle_app.py dataset.csv
+
+    # Verificar el resultado
+    - run: ls -la
+
+    # GIT commit and push results
     - name: GIT commit and push results
       env:
-        CI_COMMIT_MESSAGE: "save spark results"
+        CI_COMMIT_MESSAGE: "save motorcycle results"
         CI_COMMIT_AUTHOR: "carlitaRP"
       run: |
         git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
         git config --global user.email "zS20006731@estudiantes.uv.mx"
-        git add results/motorcycle
+        git add results/motorcycle_sales
         git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
         git push
