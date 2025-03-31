@@ -4,11 +4,11 @@ if __name__ == "__main__":
     # Crear sesión de Spark
     spark = SparkSession\
         .builder\
-        .appName("motorcycle_data")\
+        .appName("motorcycle")\
         .getOrCreate()
 
     # Cargar el dataset
-    path_bikes = "all_bike.csv"
+    path_bikes = "dataset.csv"
     df_bikes = spark.read.csv(path_bikes, header=True, inferSchema=True)
 
     # Crear vista temporal
