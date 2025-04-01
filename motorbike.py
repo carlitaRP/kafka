@@ -25,7 +25,7 @@ if __name__ == "__main__":
     query_best_brands = f"""
         SELECT DISTINCT Brand, Model
         FROM motorcycles
-        WHERE LOWER(Brand) IN ({', '.join([f"'{brand.lower()}" for brand in best_brands])})
+        WHERE LOWER(Brand) IN ({', '.join([f"'{brand.lower()}'" for brand in best_brands])})
         ORDER BY Brand ASC, Model ASC
     """
     df_best_brands = spark.sql(query_best_brands)
