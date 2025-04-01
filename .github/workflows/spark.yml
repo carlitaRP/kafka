@@ -55,6 +55,6 @@ jobs:
       run: |
         git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
         git config --global user.email "zS20006731@estudiantes.uv.mx"
-        git add results/motorcycle_sales
+        git add results/motorcycle_sales_best_brands results/motorcycle_sales_max_hp
         git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
         git push
