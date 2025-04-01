@@ -53,7 +53,7 @@ if __name__ == "__main__":
     df_max_hp_best_brands.show(20)
     
     # Guardar los resultados en formato JSON
-    df_max_hp_best_brands.write.mode("overwrite").json("results/motorcycle_sales_max_hp_best_brands")
+    df_max_hp_best_brands.write.mode("overwrite").json("results/motorcycle_sales_max_hp")
     
     # Cerrar sesión de Spark
     spark.stop()
