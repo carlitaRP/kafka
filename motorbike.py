@@ -36,23 +36,24 @@ if __name__ == "__main__":
     # Guardar los resultados en formato JSON
     df_best_brands.write.mode("overwrite").json("results/motorcycle_sales_best_brands")
     
-    # Obtener la motocicleta con mayor HP por cada marca
-    query_max_hp = """
-        SELECT Brand, Model, `Power (hp)`
+    # Obtener las 3 motocicletas con mayor HP de cada una de las mejores marcas e incluir el Displacement (ccm)
+    query_max_hp_best_brands = f"""
+        SELECT Brand, Model, `Power (hp)`, `Displacement (ccm)`
         FROM (
-            SELECT Brand, Model, `Power (hp)`, 
+            SELECT Brand, Model, `Power (hp)`, `Displacement (ccm)`,
                    ROW_NUMBER() OVER (PARTITION BY LOWER(Brand) ORDER BY `Power (hp)` DESC) AS rank
             FROM motorcycles
+            WHERE LOWER(Brand) IN ({', '.join([f"'{brand.lower()}'" for brand in best_brands])})
         )
-        WHERE rank = 1
+        WHERE rank <= 3
     """
-    df_max_hp = spark.sql(query_max_hp)
+    df_max_hp_best_brands = spark.sql(query_max_hp_best_brands)
     
     # Mostrar algunos resultados del segundo filtro
-    df_max_hp.show(20)
+    df_max_hp_best_brands.show(20)
     
     # Guardar los resultados en formato JSON
-    df_max_hp.write.mode("overwrite").json("results/motorcycle_sales_max_hp")
+    df_max_hp_best_brands.write.mode("overwrite").json("results/motorcycle_sales_max_hp_best_brands")
     
     # Cerrar sesión de Spark
     spark.stop()
